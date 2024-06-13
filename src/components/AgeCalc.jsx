@@ -2,24 +2,38 @@ import React, { useState } from "react";
 
 const AgeCalc = () => {
   const [birthdate, setBirthdate] = useState("");
-  const [age, setAge] = useState(null);
+  const [ageDetails, setAgeDetails] = useState({
+    years: null,
+    months: null,
+    days: null,
+  });
 
   const calculateAge = () => {
     if (birthdate) {
       const birthDateObj = new Date(birthdate);
       const today = new Date();
-      let calculatedAge = today.getFullYear() - birthDateObj.getFullYear();
-      const monthDiff = today.getMonth() - birthDateObj.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
-        calculatedAge--;
+
+      let years = today.getFullYear() - birthDateObj.getFullYear();
+      let months = today.getMonth() - birthDateObj.getMonth();
+      let days = today.getDate() - birthDateObj.getDate();
+
+      if (days < 0) {
+        months--;
+        days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
       }
-      setAge(calculatedAge);
+
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      setAgeDetails({ years, months, days });
     }
   };
 
   const reset = () => {
     setBirthdate("");
-    setAge(null);
+    setAgeDetails({ years: null, months: null, days: null });
   };
 
   return (
@@ -28,7 +42,8 @@ const AgeCalc = () => {
         <h1 className="text-3xl font-bold mb-4 text-center">Age Calculator</h1>
         <p className="text-center mb-6">
           The Age Calculator can determine the age or interval between two
-          dates. The calculated age will be displayed in years.
+          dates. The calculated age will be displayed in years, months, and
+          days.
         </p>
         <div className="mb-4">
           <label
@@ -60,10 +75,13 @@ const AgeCalc = () => {
           </button>
         </div>
 
-        {age !== null && (
+        {ageDetails.years !== null && (
           <div className="mt-6 p-4 bg-gray-200 rounded text-center">
             <h2 className="text-2xl font-semibold">Your Age is</h2>
-            <p className="text-xl mt-2">{age} years</p>
+            <p className="text-xl mt-2">
+              {ageDetails.years} years, {ageDetails.months} months, and{" "}
+              {ageDetails.days} days
+            </p>
           </div>
         )}
       </div>
